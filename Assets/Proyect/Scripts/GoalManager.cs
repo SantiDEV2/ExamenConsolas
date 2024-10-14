@@ -1,29 +1,36 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
-public class GoalManager: MonoBehaviour
+public class GoalManager : MonoBehaviour
 {
-    private int _lifes = 15;
-
-    public delegate void OnAction(int score);
-    public event OnAction onGoalScored;
-
-    public GameObject goalBarrier;
-
-    private void Update()
+    [System.Serializable]
+    public class GoalUI
     {
-        if (_lifes == 0)
+        public LifeManager assignedGoal;
+        public TextMeshProUGUI lifeText;
+    }
+
+    [SerializeField] private List<GoalUI> goalsUI = new List<GoalUI>();
+
+    private void OnEnable()
+    {
+        foreach (GoalUI goalUI in goalsUI)
         {
-            goalBarrier.SetActive(true);
+            goalUI.assignedGoal.onGoalScored += (updatedlife) => UpdateLife(goalUI, updatedlife);
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnDisable()
     {
-        if (_lifes == 0)
-            return;
+        foreach(GoalUI goalUI in goalsUI)
+        {
+            goalUI.assignedGoal.onGoalScored -= (updatedlife) => UpdateLife(goalUI, updatedlife);
+        }
+    }
 
-        other.gameObject.SetActive(false);
-        _lifes--;
-        onGoalScored?.Invoke(_lifes);   
+    private void UpdateLife(GoalUI goalUI, int updatedLife)
+    {
+        goalUI.lifeText.text = updatedLife.ToString();
     }
 }

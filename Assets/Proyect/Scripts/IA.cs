@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class IA : Character
 {
-    public GameObject[] balls;
+    private GameObject[] balls;
 
     void Update()
     {

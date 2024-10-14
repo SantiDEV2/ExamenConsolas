@@ -13,10 +13,13 @@ public class Character:MonoBehaviour
     [SerializeField] private protected float boundaries = 2.7f;
 
     [Header("Functionability")]
-    [SerializeField] private GoalManager assignedGoal;
+    [SerializeField] private LifeManager assignedGoal;
 
     protected virtual void Move(Vector3 direction)
     {
+        if (GameManager.isPaused)
+            return;
+
         transform.position += direction * speed * Time.deltaTime;
 
         if (xAxis)
@@ -52,6 +55,7 @@ public class Character:MonoBehaviour
         if (updatedLife == 0)
         {
             isAlive = false;
+            GameManager.Instance.RemovePlayers(this);
             Destroy(this.gameObject);
         }
 
